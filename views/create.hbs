@@ -1,0 +1,25 @@
+<div class="container">
+  <div>
+    <form action="/create" method="post" enctype="multipart/form-data" style="margin: auto;">
+      <h2>New Attendance Sheet</h2>
+      <br>
+      <input type="text" class="textbox" placeholder="Subject Name" name="subject">
+      <input type="number" class="textbox" placeholder="Number of Students" name="nStudents">
+      <br>
+      <b>For marking attendance</b>
+      <span>
+        <input type="checkbox" class="textbox" placeholder="Number" name="reqRoll">
+        <label for="c">Require Roll Number</label>
+      </span>
+      <span>
+        <input type="checkbox" class="textbox" placeholder="Number" name="reqEmail">
+        <label for="c">Require Email</label>
+      </span>
+      <br>
+
+      <input type="hidden" name="userId" value="{{ userId }}">
+
+      <input type="submit" class="button" value="Create">
+    </form>
+  </div>
+</div>

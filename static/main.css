@@ -1,0 +1,84 @@
+* {
+  box-sizing: border-box !important;
+}
+
+body {
+  margin: 0;
+  font-family: 'Franklin Gothic Light', 'Arial Narrow', Arial, sans-serif;
+  font-size: 14;
+}
+
+/* Layouts */
+article {
+  animation: fade-in 1s ease forwards;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+h2 {
+  margin: 0.5em 0;
+}
+
+.container {
+  margin: auto;
+  max-width: 600px;
+  padding: 1em;
+}
+
+/* Links */
+a {
+  color: cadetblue;
+  margin: 0.5em;
+}
+a:visited {
+  color: teal;
+}
+a:first-of-type {
+  margin-left: 0;
+}
+a:last-of-type {
+  margin-right: 0;
+}
+
+a[class~='link-button'] {
+  padding: 0.5em 1em;
+  border: 1px solid cadetblue;
+  border-radius: 5px;
+}
+a:visited[class~='link-button'] {
+  border: 1px solid teal;
+  border-radius: 5px;
+}
+
+/* Button */
+.button {
+  color: white;
+  padding: 1em 1.5em;
+  margin: 0.25em 0;
+  border: none;
+  border-radius: 5px;
+  background-color: royalblue;
+  box-shadow: 2px 2px 5px #aaa;
+}
+
+/* Textbox */
+.textbox {
+  padding: 1em;
+  margin: 0.25em 0;
+  border: 1.5px solid gray;
+  border-radius: 5px;
+}
+
+/* Form */
+form {
+  display: flex;
+  padding: 2em;
+  flex-direction: column;
+  max-width: 20em;
+}
