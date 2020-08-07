@@ -280,13 +280,10 @@ markingRouter.post('/:sheetId', async (req, res)=>{
 
     let cellIndex = columnToLetter(activeLecture + 2)
     let row = values.indexOf(roll)
-    if (row !== -1)
-      cellIndex += row.toString()
-    else
-      cellIndex += (students.length + 1).toString()
-      
 
-    /** @todo Add P to right row */
+    cellIndex += (row !== -1) ? (row + 2).toString() : (students.length + 1).toString()
+      
+    // Add P to right row
     await GoogleSheets.spreadsheets.values
       .update({
         spreadsheetId: ssId,
