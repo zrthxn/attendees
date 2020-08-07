@@ -260,8 +260,7 @@ markingRouter.post('/:sheetId', async (req, res)=>{
         majorDimension: 'COLUMNS'
       })
     
-    console.log(values)
-    values = (values) ? values[0] : []
+    values = (values !== undefined) ? values[0] : []
 
     if (!values.includes(roll)) {
       await GoogleSheets.spreadsheets.values
