@@ -6,13 +6,10 @@ import multer from 'multer'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 
-import router from './router'
-import auth from './auth'
-
 export const AUTHDIR = path.resolve(__dirname, '../../auth')
 
 const app = express()
-const upload = multer()
+const multipart = multer()
 
 app.set('view engine', 'hbs')
 app.set('views', path.join(__dirname, '../../views'))
@@ -32,12 +29,22 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(upload.array()) 
-app.use(express.static('public'))
-
+app.use(multipart.array()) 
 app.use('/static', express.static(path.resolve(__dirname, '../../static')))
 
-app.use(router)
-app.use('/auth', auth)
+import { authRouter } from './auth'
+import { sheetRouter, markingRouter } from './router'
+
+app.get('/', (_, res)=>{
+  res.render('home', { title: 'Sheets Attendance | Attendance Management for Virtual Classes' })
+})
+
+app.get('/github', (_, res)=>{
+  res.redirect('https://github.com/zrthxn')
+})
+
+app.use('/auth', authRouter)
+app.use('/sheets', sheetRouter)
+app.use('/mark', markingRouter)
 
 app.listen(3000, () => console.log('Server started') )

@@ -3,7 +3,7 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/firestore'
 
-import DatabaseConfig from '../auth/firebase.config.json'
+import DatabaseConfig from '../../auth/firebase.config.json'
 
 if (firebase.apps.length===0)
   firebase.initializeApp(DatabaseConfig)

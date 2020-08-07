@@ -13,14 +13,15 @@ import { firestore } from './database'
 import { AUTHDIR } from '.'
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+const COOKIE_MAX_AGE = 86400000 // 24 Hours
 
-const auth = Router()
+export const authRouter = Router()
 
-auth.get('/login', (req, res)=>{
+authRouter.get('/login', (req, res)=>{
   res.render('login')
 })
 
-auth.post('/login', async (req, res)=>{
+authRouter.post('/login', async (req, res)=>{
   const { email } = req.body
   const { ruri } = req.query
 
@@ -30,15 +31,20 @@ auth.post('/login', async (req, res)=>{
     let destination
     switch (ruri) {
       case 'create':
-        destination = '/create'
+        destination = '/sheets/create'
         break
     
       default: 
-        destination = `/sheets/${email}`
+        destination = `/sheets`
         break
     }
 
     /** @todo Set document cookie */
+    res.cookie('userId', email, { httpOnly: true })
+    res.cookie('access', 'hash', {
+      maxAge: COOKIE_MAX_AGE, httpOnly: true, signed: true
+    })
+
     return res.redirect(destination)
   }
   else {
@@ -46,6 +52,7 @@ auth.post('/login', async (req, res)=>{
     const { client_secret, client_id, redirect_uris } = credentials.web
     const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
 
+    res.cookie('userId', email, { httpOnly: true })
     res.redirect(
       oAuth2Client.generateAuthUrl({
         access_type: 'offline',
@@ -55,15 +62,21 @@ auth.post('/login', async (req, res)=>{
   }
 })
 
-auth.post('/auth/callback', async (req, res)=>{
+authRouter.post('/callback', async (req, res)=>{
   const { code } = req.query
+  const { userId } = req.cookies
+
+  if(!userId) // Safegaurd
+    return res.sendStatus(403)
+  if(!code) // Safegaurd
+    return res.sendStatus(403)
 
   const credentials = await readCredentials()
   const { client_secret, client_id, redirect_uris } = credentials.web
   const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
 
   try {
-    let token = await oAuth2Client.getToken(code)  
+    let token = await oAuth2Client.getToken(code)
     oAuth2Client.setCredentials(token)
 
     let config = await readConfigFile()
@@ -74,6 +87,9 @@ auth.post('/auth/callback', async (req, res)=>{
     console.log('Token stored to', config.accounts[userId].token)
     
     /** @todo Set document cookie */
+    res.cookie('access', 'hash', {
+      maxAge: COOKIE_MAX_AGE, httpOnly: true, signed: true
+    })
     
     await firestore.collection('users').doc(userId).set({
       userId,
@@ -86,5 +102,3 @@ auth.post('/auth/callback', async (req, res)=>{
     return res.sendStatus(500)
   }
 })
-
-export default auth
