@@ -62,7 +62,7 @@ authRouter.post('/login', async (req, res)=>{
   }
 })
 
-authRouter.post('/callback', async (req, res)=>{
+authRouter.get('/callback', async (req, res)=>{
   const { code } = req.query
   const { userId } = req.cookies
 
