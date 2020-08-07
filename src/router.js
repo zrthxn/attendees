@@ -253,15 +253,14 @@ markingRouter.post('/:sheetId', async (req, res)=>{
 
     const GoogleSheets = google.sheets({ auth, version: 'v4' })
     
-    let value = await GoogleSheets.spreadsheets.values
+    let { data } = await GoogleSheets.spreadsheets.values
       .get({
         spreadsheetId: ssId,
         range: `A2:A${students.length + 1}`,
         majorDimension: 'COLUMNS'
       })
     
-    console.log(value)
-    let values = (value.values !== undefined) ? value.values[0] : []
+    let values = (data.values !== undefined) ? data.values[0] : []
 
     if (!values.includes(roll)) {
       await GoogleSheets.spreadsheets.values
