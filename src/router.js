@@ -112,7 +112,13 @@ sheetRouter.get('/create', (req, res)=>{
 
 sheetRouter.post('/create', async (req, res)=>{
   const { userId } = req.cookies
-  const { subject, studentCount, reqName, reqEmail } = req.body
+  
+  let { subject, studentCount, reqName, reqEmail } = req.body
+  if (reqName) reqName = true 
+  else reqName = false
+
+  if (reqEmail) reqEmail = true 
+  else reqEmail = false
 
   const credentials = await readCredentials()
   const token = await readToken(userId)
