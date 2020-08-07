@@ -1,6 +1,6 @@
 import path from 'path'
 import crypto from 'crypto'
-import google from 'googleapis'
+import { google } from 'googleapis'
 import { Router } from 'express'
 
 import { readCredentials, readToken, readConfigFile } from './accounts'
