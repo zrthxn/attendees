@@ -114,12 +114,9 @@ sheetRouter.post('/create', async (req, res)=>{
   const { userId } = req.cookies
   
   let { subject, studentCount, reqName, reqEmail } = req.body
-  if (reqName) reqName = true 
-  else reqName = false
-
-  if (reqEmail) reqEmail = true 
-  else reqEmail = false
-
+  reqName = (reqName) ? true : false
+  reqEmail = (reqEmail) ? true : false
+  
   const credentials = await readCredentials()
   const token = await readToken(userId)
 
@@ -241,7 +238,7 @@ markingRouter.post('/:sheetId', async (req, res)=>{
   
     if (!students.map(s => s.roll).includes(roll)) {
       if (students.length < studentCount)
-        students.concat([ { roll, name, email } ])
+        students = students.concat([ { roll, name, email } ])
       else
         return res.status(403).render('status', { 
           status: 'Failed', message: 'Class already full.' 
@@ -259,19 +256,23 @@ markingRouter.post('/:sheetId', async (req, res)=>{
     let { values } = await GoogleSheets.spreadsheets.values
       .get({
         spreadsheetId: ssId,
-        range: `A2:A${students.length}`,
+        range: `A2:A${students.length + 2}`,
         majorDimension: 'COLUMNS'
       })
     
-    values = values[0]  
+    if (values)
+      values = values[0]
+    else
+      values = []  
 
     if (!values.includes(roll)) {
       await GoogleSheets.spreadsheets.values
         .append({
           spreadsheetId: ssId,
-          range: `A2:A${students.length}`,
+          range: `A2:A${students.length + 2}`,
           insertDataOption: 'INSERT_ROWS',
           valueInputOption: 'RAW',
+          majorDimension: 'ROWS',
           resource: {
             values: [
               [ roll, `${name} <${email}>` ]
