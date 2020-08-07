@@ -45,7 +45,7 @@ sheetRouter.post('/:sheetId/next', async (req, res)=>{
 
   let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
   if (sheetRecord.exists) {
-    let { activeLecture } = sheetRecord.data()
+    let { ssId, activeLecture } = sheetRecord.data()
     
     const credentials = await readCredentials()
     const token = await readToken(userId)
