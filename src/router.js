@@ -272,8 +272,8 @@ markingRouter.post('/:sheetId', async (req, res)=>{
           range: `A2:A${students.length + 2}`,
           insertDataOption: 'INSERT_ROWS',
           valueInputOption: 'RAW',
-          majorDimension: 'ROWS',
           resource: {
+            majorDimension: 'ROWS',
             values: [
               [ roll, `${name} <${email}>` ]
             ]
