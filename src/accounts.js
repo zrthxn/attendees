@@ -42,9 +42,9 @@ export async function readToken(userId) {
   
   try {
     if(config.accounts.hasOwnProperty(userId)) {
-      const token = config.accounts[userId].token
+      const token = config.accounts[userId]
       
-      if (token.expiresOn < Date.now())
+      if (token.expiry_date < Date.now())
         throw "Token expired"
   
       return token
