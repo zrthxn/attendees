@@ -92,30 +92,32 @@ sheetRouter.post('/create', async (req, res)=>{
   else // Safegaurd
     res.redirect('/auth/login?ruri=create')
 
-  // Create sheet
-  google.sheets({ auth, version: 'v4' }).spreadsheets.create({
-    fields: 'spreadsheetId',
-    resource: {
-      properties: {
-        title: `${subject} - Attendance`
-      }
-    }
-  }, async (err, spreadsheet) =>{
-    if (err) {
-      console.error(err)
-      return res.sendStatus(500)
-    }
+  try {
+    // Create sheet
+    let spreadsheet = await google.sheets({ auth, version: 'v4' })
+      .spreadsheets
+      .create({
+        resource: {
+          properties: {
+            title: `${subject} - Attendance`
+          }
+        }
+      })
+
     // Create record
     await firestore.collection('sheets').doc(sheetId).set({
       subject,
-      ssId: spreadsheet.spreadsheetId,
+      ssId: spreadsheet.data.spreadsheetId,
       belongsTo: userId,
       activeLecture: 0,
       number: nStudents
     })
-
-    res.redirect('/sheets')
-  });
+  
+    return res.redirect('/sheets') 
+  } catch (error) {
+    console.error(err)
+    return res.sendStatus(500)
+  }
 })
 
 // --------------------------------------------------------
@@ -159,7 +161,7 @@ markingRouter.post('/', async (req, res)=>{
     auth.setCredentials(token)
 
     /** @todo Add P to right row */
-    google.sheets({ auth, version: 'v4' }).spreadsheets.append()
+    await google.sheets({ auth, version: 'v4' }).spreadsheets.append()
 
     return res.render('success', {
       message: 'Your attendance was marked.' 
