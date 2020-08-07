@@ -9,6 +9,7 @@ import { Router } from 'express'
 import { google } from 'googleapis'
 
 import { readCredentials, readToken, readConfigFile } from './accounts'
+import { firestore } from './database'
 import { AUTHDIR } from '.'
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -73,6 +74,12 @@ auth.post('/auth/callback', async (req, res)=>{
     console.log('Token stored to', config.accounts[userId].token)
     
     /** @todo Set document cookie */
+    
+    await firestore.collection('users').doc(userId).set({
+      userId,
+      sheets: []
+    })
+
     return res.redirect(`/sheets/${userId}`)
   } catch (error) {
     console.error(error)
