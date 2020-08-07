@@ -35,7 +35,7 @@ authRouter.post('/login', async (req, res)=>{
         break
     
       default: 
-        destination = `/sheets`
+        destination = '/sheets'
         break
     }
 
@@ -80,11 +80,9 @@ authRouter.get('/callback', async (req, res)=>{
     oAuth2Client.setCredentials(token)
 
     let config = await readConfigFile()
-    config.accounts[userId] = token
+    config.accounts[userId] = token.tokens
     
     fs.writeFileSync(path.join(AUTHDIR, 'auth.config.json'), JSON.stringify(config, null, 2))
-
-    console.log('Token stored to', config.accounts[userId].token)
     
     /** @todo Set document cookie */
     res.cookie('access', 'hash', {
@@ -96,7 +94,7 @@ authRouter.get('/callback', async (req, res)=>{
       sheets: []
     })
 
-    return res.redirect(`/sheets/${userId}`)
+    return res.redirect('/sheets')
   } catch (error) {
     console.error(error)
     return res.sendStatus(500)
