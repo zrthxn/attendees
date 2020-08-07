@@ -80,7 +80,7 @@ authRouter.get('/callback', async (req, res)=>{
     oAuth2Client.setCredentials(token)
 
     let config = await readConfigFile()
-    config.accounts[userId] = JSON.stringify(token)
+    config.accounts[userId] = token.tokens
     
     fs.writeFileSync(path.join(AUTHDIR, 'auth.config.json'), JSON.stringify(config, null, 2))
     
