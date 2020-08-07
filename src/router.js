@@ -203,12 +203,9 @@ markingRouter.get('/:sheetId', async (req, res)=>{
 
   let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
   if (sheetRecord.exists) {
-    let { subject, activeLecture, reqName, reqEmail } = sheetRecord.data()
     return res.render('mark', { 
       title: 'Mark your Attendance',
-      class: subject, 
-      lecture: activeLecture,
-      reqName, reqEmail
+      data: sheetRecord.data()
     })
   }
   else

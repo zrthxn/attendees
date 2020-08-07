@@ -1,27 +1,29 @@
 <div class="container">
-  <form action="/mark/{{ sheetId }}" method="post" style="margin: auto; padding: 2em;">
-    <h2>Mark your Attendance</h2>
-    <br>
-    <span>
-      <b>Lecture {{ lecture }}</b>
-      <p>{{ class }}</p>
-    </span>
-    <br>
-    <input type="text" class="textbox" placeholder="Roll Number" name="roll"
-      required="true" onchange="uppcase(event)">
+  {{#data}}
+    <form action="/mark/{{ sheetId }}" method="post" style="margin: auto; padding: 2em;">
+      <h2>Mark your Attendance</h2>
+      <br>
+      <span>
+        <b>Lecture {{ activeLecture }}</b>
+        <p>{{ subject }}</p>
+      </span>
+      <br>
+      <input type="text" class="textbox" placeholder="Roll Number" name="roll"
+        required="true" onchange="uppcase(event)">
 
-    {{#if reqName}}
-      <input type="text" class="textbox" placeholder="Name" name="name"
-        required="true" onchange="capitalize(event)">
-    {{/if}}
+      {{#if reqName}}
+        <input type="text" class="textbox" placeholder="Name" name="name"
+          required="true" onchange="capitalize(event)">
+      {{/if}}
 
-    {{#if reqEmail}}
-      <input type="text" class="textbox" placeholder="Email" name="email"
-        required="true" onchange="lowercase(event)">
-    {{/if}}
-    <br>
-    <input type="submit" class="button">
-  </form>
+      {{#if reqEmail}}
+        <input type="text" class="textbox" placeholder="Email" name="email"
+          required="true" onchange="lowercase(event)">
+      {{/if}}
+      <br>
+      <input type="submit" class="button">
+    </form>
+  {{/data}}
 </div>
 
 <script>
