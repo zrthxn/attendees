@@ -50,7 +50,7 @@ sheetRouter.post('/:sheetId/next', async (req, res)=>{
     const auth = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
     auth.setCredentials(token)
 
-    google.sheets_v4({ auth }).spreadsheets.append()
+    google.sheets({ auth, version: 'v4' }).spreadsheets.append()
 
     return res.redirect('/sheets')
   }
@@ -93,7 +93,7 @@ sheetRouter.post('/create', async (req, res)=>{
     res.redirect('/auth/login?ruri=create')
 
   // Create sheet
-  google.sheets_v4({ auth }).spreadsheets.create({
+  google.sheets({ auth, version: 'v4' }).spreadsheets.create({
     fields: 'spreadsheetId',
     resource: {
       properties: {
@@ -159,7 +159,7 @@ markingRouter.post('/', async (req, res)=>{
     auth.setCredentials(token)
 
     /** @todo Add P to right row */
-    google.sheets_v4({ auth }).spreadsheets.append()
+    google.sheets({ auth, version: 'v4' }).spreadsheets.append()
 
     return res.render('success', {
       message: 'Your attendance was marked.' 
