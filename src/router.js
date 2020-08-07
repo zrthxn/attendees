@@ -167,5 +167,3 @@ markingRouter.post('/', async (req, res)=>{
   else
     return res.status(403).send('This sheet does not exist')
 })
-
-export default router
