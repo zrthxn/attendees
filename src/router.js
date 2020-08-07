@@ -25,7 +25,11 @@ sheetRouter.get('/', async (req, res)=>{
   let userRecord = await firestore.collection('users').doc(userId).get()
   if (userRecord.exists) {
     let userSheets = await firestore.collection('sheets').where('belongsTo', '==', userId).get()
-    return res.render('sheets', { title: 'My Sheets', sheets: userSheets.docs })
+    
+    return res.render('sheets', { 
+      title: 'My Sheets', 
+      sheets: userSheets.docs.map(doc => doc.data())
+    })
   }
   else
     return res.status(403).send('This sheet does not exist.')
@@ -51,6 +55,27 @@ sheetRouter.post('/:sheetId/next', async (req, res)=>{
     auth.setCredentials(token)
 
     google.sheets({ auth, version: 'v4' }).spreadsheets.append()
+
+    return res.redirect('/sheets')
+  }
+  else
+    return res.status(403).send('This sheet does not exist.')
+})
+
+sheetRouter.post('/:sheetId/delete', async (req, res)=>{
+  // Add lecture  
+  const { userId } = req.cookies
+  const { sheetId } = req.params
+
+  let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
+  if (sheetRecord.exists) {    
+    const credentials = await readCredentials()
+    const token = await readToken(userId)
+
+    if (!token) // Safegaurd
+      return res.redirect('/auth/login?ruri=sheets')
+    
+    await firestore.collection('sheets').doc(sheetId).delete()
 
     return res.redirect('/sheets')
   }
@@ -106,6 +131,7 @@ sheetRouter.post('/create', async (req, res)=>{
 
     // Create record
     await firestore.collection('sheets').doc(sheetId).set({
+      sheetId,
       subject,
       ssId: spreadsheet.data.spreadsheetId,
       belongsTo: userId,
@@ -115,7 +141,7 @@ sheetRouter.post('/create', async (req, res)=>{
   
     return res.redirect('/sheets') 
   } catch (error) {
-    console.error(err)
+    console.error(error)
     return res.sendStatus(500)
   }
 })

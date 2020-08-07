@@ -1,7 +1,21 @@
 <div class="container">
-  <h2>Your Sheets</h2>
+  <div>
+    <h2 style="width: fit-content;">Your Sheets</h2>
+    <a href="/sheets/create" class="link-button" style="float: right;">Create</a>
+  </div>
+  <br><br><br>
 
-  <div class="container">
-    
+  <div>
+    {{#sheets}}
+      <div class="container sheet-entry">
+        <b>{{ subject }}</b>
+        <p>{{ number }} Students</p>
+        <i>{{ belongsTo }}</i>
+
+        <form action="sheets/{{ sheetId }}/delete" method="post" style="padding: 0; float: right;">
+          <input type="submit" value="Delete" style="background-color: transparent; border: none; color: tomato;">
+        </form>
+      </div>
+    {{/sheets}}
   </div>
 </div>

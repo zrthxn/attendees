@@ -82,3 +82,11 @@ form {
   flex-direction: column;
   max-width: 20em;
 }
+
+/*  */
+.sheet-entry {
+  margin: 0.5em 0;
+  border: 1px solid lightblue;  
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px #aaa;
+}
