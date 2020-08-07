@@ -158,6 +158,7 @@ sheetRouter.post('/create', async (req, res)=>{
         spreadsheetId: data.spreadsheetId,
         insertDataOption: 'INSERT_ROWS',
         valueInputOption: 'RAW',
+        range: 'A1:B1',
         resource: {
           values: [
             [ "Roll Number", "Name" ]
