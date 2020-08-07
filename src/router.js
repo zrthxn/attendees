@@ -256,20 +256,17 @@ markingRouter.post('/:sheetId', async (req, res)=>{
     let { values } = await GoogleSheets.spreadsheets.values
       .get({
         spreadsheetId: ssId,
-        range: `A2:A${students.length + 2}`,
+        range: `A2:A${students.length + 1}`,
         majorDimension: 'COLUMNS'
       })
     
-    if (values)
-      values = values[0]
-    else
-      values = []  
+    values = (values) ? values[0] : []
 
-    if (values.includes(roll) !== -1) {
+    if (!values.includes(roll)) {
       await GoogleSheets.spreadsheets.values
         .append({
           spreadsheetId: ssId,
-          range: `A2:A${students.length + 2}`,
+          range: `A2:A${values.length + 1}`,
           insertDataOption: 'INSERT_ROWS',
           valueInputOption: 'RAW',
           resource: {
@@ -283,9 +280,8 @@ markingRouter.post('/:sheetId', async (req, res)=>{
 
     let cellIndex = columnToLetter(activeLecture + 2)
     let row = values.indexOf(roll)
-
     if (row !== -1)
-      cellIndex += values.indexOf(roll).toString()
+      cellIndex += row.toString()
     else
       cellIndex += (students.length + 1).toString()
       
