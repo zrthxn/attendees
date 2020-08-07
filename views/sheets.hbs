@@ -8,14 +8,45 @@
   <div>
     {{#sheets}}
       <div class="container sheet-entry">
-        <b>{{ subject }}</b>
-        <p>{{ number }} Students</p>
-        <i>{{ belongsTo }}</i>
+        <p style="text-align: right; float: right; font-size: small;">
+          Marking Link 
+          <label id="copy-btn" style="border-radius: 5px; padding: 0 5px; background-color: #eee;" 
+            onclick="copyURL('https://attendees.zrthxn.com/mark/{{ sheetId }}')">
+            Copy
+          </label>
+          <br>
+          <a href="/mark/{{ sheetId }}" id="link">
+            attendees.zrthxn.com/mark/{{ sheetId }}
+          </a>
+        </p>
 
-        <form action="sheets/{{ sheetId }}/delete" method="post" style="padding: 0; float: right;">
+        <b>{{ subject }}</b>
+        <a href="https://docs.google.com/spreadsheets/d/{{ ssId }}" id="link" style="font-size: small;">
+          Open
+        </a>
+        <br><br>  
+        
+        <p style="display: inline;">
+          {{ studentCount }} Students, {{ activeLecture }} Lectures | 
+          <form action="/sheets/{{ sheetId }}/next" method="post" style="padding: 0; display: inline;">
+            <input type="submit" value="Next Lecture" 
+              style="background-color: transparent; border: none; color: darkcyan; padding: 0;">
+          </form>
+        </p>
+
+        <i style="color: darkgray; font-size: small;">{{ belongsTo }}</i>
+
+        <form action="/sheets/{{ sheetId }}/delete" method="post" style="padding: 0; float: right;">
           <input type="submit" value="Delete" style="background-color: transparent; border: none; color: tomato;">
         </form>
       </div>
     {{/sheets}}
   </div>
 </div>
+
+<script>
+  function copyURL(URL) {
+    navigator.clipboard.writeText(URL);  
+    document.getElementById("copy-btn").innerHTML = "Copied";
+  }
+</script>

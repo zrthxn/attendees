@@ -1,5 +1,5 @@
 <div class="container">
-  <form action="/mark" method="post" style="margin: auto; padding: 2em;">
+  <form action="/mark/{{ sheetId }}" method="post" style="margin: auto; padding: 2em;">
     <h2>Mark your Attendance</h2>
     <br>
     <span>
@@ -7,13 +7,36 @@
       <p>{{ class }}</p>
     </span>
     <br>
-    <input type="text" class="textbox" placeholder="Name" name="name">
-    <input type="text" class="textbox" placeholder="Roll Number" name="roll">
-    <input type="text" class="textbox" placeholder="Email" name="email">
+    <input type="text" class="textbox" placeholder="Roll Number" name="roll"
+      required="true" onchange="uppcase(event)">
 
-    <input type="hidden" name="sheetId" value="{{ sheetId }}">
-    <input type="hidden" name="lecture" value="{{ lecture }}">
+    {{#if reqName}}
+      <input type="text" class="textbox" placeholder="Name" name="name"
+        required="true" onchange="capitalize(event)">
+    {{/if}}
+
+    {{#if reqEmail}}
+      <input type="text" class="textbox" placeholder="Email" name="email"
+        required="true" onchange="lowercase(event)">
+    {{/if}}
     <br>
     <input type="submit" class="button">
   </form>
 </div>
+
+<script>
+  function capitalize(event) {
+    event.target.value = event.target.value
+      .split(' ')
+      .map(token => token.substr(0, 1).toUpperCase() + token.substr(1, token.length).toLowerCase())
+      .join(' ')
+  }
+
+  function uppcase(event) {
+    event.target.value = event.target.value.toUpperCase()
+  }
+
+  function lowercase(event) {
+    event.target.value = event.target.value.toLowerCase()
+  }
+</script>

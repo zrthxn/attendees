@@ -86,7 +86,20 @@ form {
 /*  */
 .sheet-entry {
   margin: 0.5em 0;
-  border: 1px solid lightblue;  
+  border: 1px solid gray;  
   border-radius: 5px;
   box-shadow: 2px 2px 5px #aaa;
+  
+  position: relative;
+  animation: slide-in 1s ease forwards;
+}
+@keyframes slide-in {
+  from {
+    bottom: -4em;
+    opacity: 0;
+  }
+  to {
+    bottom: 0;
+    opacity: 1;
+  }
 }
