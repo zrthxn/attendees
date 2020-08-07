@@ -265,7 +265,7 @@ markingRouter.post('/:sheetId', async (req, res)=>{
     else
       values = []  
 
-    if (!values.includes(roll)) {
+    if (values.includes(roll) !== -1) {
       await GoogleSheets.spreadsheets.values
         .append({
           spreadsheetId: ssId,
