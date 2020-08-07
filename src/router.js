@@ -236,7 +236,7 @@ markingRouter.post('/:sheetId', async (req, res)=>{
         status: 'Error', message: 'Internal server error.' 
       })
   
-    if (!students.map(s => s.roll).includes(roll)) {
+    if (!students.map(({roll}) => roll).includes(roll)) {
       if (students.length < studentCount)
         students = students.concat([ { roll, name, email } ])
       else
@@ -253,14 +253,15 @@ markingRouter.post('/:sheetId', async (req, res)=>{
 
     const GoogleSheets = google.sheets({ auth, version: 'v4' })
     
-    let { values } = await GoogleSheets.spreadsheets.values
+    let value = await GoogleSheets.spreadsheets.values
       .get({
         spreadsheetId: ssId,
         range: `A2:A${students.length + 1}`,
         majorDimension: 'COLUMNS'
       })
     
-    values = (values !== undefined) ? values[0] : []
+    console.log(value)
+    let values = (value.values !== undefined) ? value.values[0] : []
 
     if (!values.includes(roll)) {
       await GoogleSheets.spreadsheets.values
