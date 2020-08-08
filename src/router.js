@@ -207,6 +207,7 @@ sheetRouter.post('/create', async (req, res)=>{
         ssId: data.spreadsheetId,
         belongsTo: userId,
         activeLecture: 0,
+        isActiveLecture: false,
         sheetId,
         subject, 
         studentCount: parseInt(studentCount), 
