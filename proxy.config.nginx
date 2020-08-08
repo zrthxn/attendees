@@ -1,8 +1,0 @@
-server {
-  server_name attendance.zrthxn.com;
-  listen 80;
-
-  location / {
-    proxy_set_header Host $host;
-  }
-}
