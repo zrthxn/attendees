@@ -15,6 +15,8 @@ sheetRouter.use((req, _, next) => {
   const { access } = req.signedCookies
 
   /** @todo check document cookie */
+  if (!userId)
+    return res.redirect('/auth/login?then=sheets')
 
   next()
 })

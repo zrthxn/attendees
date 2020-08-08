@@ -17,19 +17,19 @@ const COOKIE_MAX_AGE = 86400000 // 24 Hours
 
 export const authRouter = Router()
 
-authRouter.get('/login', (req, res)=>{
-  res.render('login')
+authRouter.get('/login', (_, res)=>{
+  res.render('login', { title: 'Login to Google' })
 })
 
 authRouter.post('/login', async (req, res)=>{
   const { email } = req.body
-  const { ruri } = req.query
+  const { then } = req.query
 
   const token = await readToken(email)
 
   if(token) {
     let destination
-    switch (ruri) {
+    switch (then) {
       case 'create':
         destination = '/sheets/create'
         break
@@ -84,7 +84,7 @@ authRouter.get('/callback', async (req, res)=>{
     
     fs.writeFileSync(path.join(AUTHDIR, 'auth.config.json'), JSON.stringify(config, null, 2))
     
-    /** @todo Set document cookie */
+    /** @access Set document cookie */
     res.cookie('access', 'hash', {
       maxAge: COOKIE_MAX_AGE, httpOnly: true, signed: true
     })
