@@ -5,6 +5,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import { Router } from 'express'
 import { google } from 'googleapis'
 
@@ -23,43 +24,42 @@ authRouter.get('/login', (_, res)=>{
 
 authRouter.post('/login', async (req, res)=>{
   const { email } = req.body
-  const { then } = req.query
+  const { access } = req.signedCookies
+
+  const credentials = await readCredentials()
+  const { client_secret, client_id, redirect_uris } = credentials.web
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
 
   const token = await readToken(email)
 
-  if(token) {
-    let destination
-    switch (then) {
-      case 'create':
-        destination = '/sheets/create'
-        break
-    
-      default: 
-        destination = '/sheets'
-        break
+  if (token) {
+    if (access === crypto.createHash('sha512')
+      .update(process.env.AUTH_KEY)
+      .update(token.tokens.access_token)
+      .digest('hex')) 
+    {
+      let destination
+      switch (req.query.then) {
+        case 'create':
+          destination = '/sheets/create'
+          break
+      
+        default: 
+          destination = '/sheets'
+          break
+      }
+      
+      return res.redirect(destination)
     }
+  }
 
-    /** @todo Set document cookie */
-    res.cookie('userId', email, { httpOnly: true })
-    res.cookie('access', 'hash', {
-      maxAge: COOKIE_MAX_AGE, httpOnly: true, signed: true
+  res.cookie('userId', email, { httpOnly: true })
+  return res.redirect(
+    oAuth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: SCOPES
     })
-
-    return res.redirect(destination)
-  }
-  else {
-    const credentials = await readCredentials()
-    const { client_secret, client_id, redirect_uris } = credentials.web
-    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
-
-    res.cookie('userId', email, { httpOnly: true })
-    res.redirect(
-      oAuth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: SCOPES
-      })
-    )
-  }
+  )
 })
 
 authRouter.get('/callback', async (req, res)=>{
@@ -85,12 +85,16 @@ authRouter.get('/callback', async (req, res)=>{
     fs.writeFileSync(path.join(AUTHDIR, 'auth.config.json'), JSON.stringify(config, null, 2))
     
     /** @access Set document cookie */
-    res.cookie('access', 'hash', {
+    res.cookie('access', crypto.createHash('sha512')
+      .update(process.env.AUTH_KEY)
+      .update(token.tokens.access_token)
+      .digest('hex'), {
       maxAge: COOKIE_MAX_AGE, httpOnly: true, signed: true
     })
     
     await firestore.collection('users').doc(userId).set({
-      userId,
+      userId, 
+      createdOn: (new Date()).toUTCString(),
       sheets: []
     })
 

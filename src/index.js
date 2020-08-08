@@ -23,7 +23,7 @@ app.engine('hbs',
   })
 )
 
-app.use(cookieParser("secret"))
+app.use(cookieParser(process.env.AUTH_KEY))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())

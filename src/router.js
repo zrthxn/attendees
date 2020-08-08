@@ -1,16 +1,14 @@
-import path from 'path'
 import crypto from 'crypto'
 import { google } from 'googleapis'
 import { Router } from 'express'
 
-import { readCredentials, readToken, readConfigFile } from './accounts'
+import { readCredentials, readToken } from './accounts'
 import { firestore } from './database'
-import { calendar } from 'googleapis/build/src/apis/calendar'
 
 // --------------------------------------------------------
 export const sheetRouter = Router()
 
-sheetRouter.use((req, res, next) => {
+sheetRouter.use(async (req, res, next) => {
   const { userId } = req.cookies
   const { access } = req.signedCookies
 
@@ -18,7 +16,18 @@ sheetRouter.use((req, res, next) => {
   if (!userId)
     return res.redirect('/auth/login?then=sheets')
 
-  next()
+  const token = await readToken(userId)
+  if (!token) // Safegaurd
+    return res.redirect('/auth/login?then=sheets')
+
+  if (access === crypto.createHash('sha512')
+      .update(process.env.AUTH_KEY)
+      .update(token.tokens.access_token)
+      .digest('hex')
+    ) 
+    next()
+  else
+    return res.redirect('/auth/login?then=sheets')
 })
 
 // view sheet, and added lectures
@@ -53,11 +62,15 @@ sheetRouter.post('/:sheetId/next', async (req, res)=>{
     const token = await readToken(userId)
 
     if (!token) // Safegaurd
-      return res.redirect('/auth/login?ruri=sheets')
+      return res.redirect('/auth/login?then=sheets')
 
     activeLecture++
 
-    await firestore.collection('sheets').doc(sheetId).update({ activeLecture })
+    await firestore.collection('sheets').doc(sheetId)
+      .update({ 
+        activeLecture,
+        isActiveLecture: true
+      })
 
     const { client_secret, client_id, redirect_uris } = credentials.web
     const auth = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
@@ -83,6 +96,23 @@ sheetRouter.post('/:sheetId/next', async (req, res)=>{
     })
 })
 
+sheetRouter.post('/:sheetId/stop', async (req, res)=>{
+  const { sheetId } = req.params
+
+  let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
+  if (sheetRecord.exists) {
+    await firestore.collection('sheets').doc(sheetId).update({
+      isActiveLecture: false
+    })
+
+    return res.redirect('/sheets')
+  }
+  else
+    return res.status(403).render('status', { 
+      status: 'Failed', message: 'This sheet does not exist.' 
+    })
+})
+
 // Add lecture  
 sheetRouter.post('/:sheetId/delete', async (req, res)=>{
   const { userId } = req.cookies
@@ -92,7 +122,7 @@ sheetRouter.post('/:sheetId/delete', async (req, res)=>{
   if (sheetRecord.exists) {    
     const token = await readToken(userId)
     if (!token) // Safegaurd
-      return res.redirect('/auth/login?ruri=sheets')
+      return res.redirect('/auth/login?then=sheets')
     
     await firestore.collection('sheets').doc(sheetId).delete()
 
@@ -107,7 +137,7 @@ sheetRouter.post('/:sheetId/delete', async (req, res)=>{
 sheetRouter.get('/create', (req, res)=>{
   const { userId } = req.cookies
   if (!userId) // Safegaurd
-    res.redirect('/auth/login?ruri=create')
+    res.redirect('/auth/login?then=create')
 
   res.render('create', { title: 'Create New Sheet' })
 })
@@ -123,7 +153,7 @@ sheetRouter.post('/create', async (req, res)=>{
   const token = await readToken(userId)
 
   if (!token) // Safegaurd
-    res.redirect('/auth/login?ruri=create')
+    res.redirect('/auth/login?then=create')
 
   let sheetId = String()
   for (let t = 0; t < 5; t++) { // Prevent sheetId collision
@@ -139,7 +169,7 @@ sheetRouter.post('/create', async (req, res)=>{
       sheets: userRecord.data().sheets.concat([sheetId])
     })
   else // Safegaurd
-    res.redirect('/auth/login?ruri=create')
+    res.redirect('/auth/login?then=create')
 
   try {
     // Create sheet
@@ -202,10 +232,15 @@ markingRouter.get('/:sheetId', async (req, res)=>{
 
   let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
   if (sheetRecord.exists) {
-    return res.render('mark', { 
-      title: 'Mark your Attendance',
-      data: sheetRecord.data()
-    })
+    if (sheetRecord.data().isActiveLecture)
+      return res.render('mark', { 
+        title: 'Mark your Attendance',
+        data: sheetRecord.data()
+      })
+    else
+      return res.status(403).render('status', { 
+        status: 'Denied', message: 'Attendance is closed.' 
+      })
   }
   else
     return res.status(403).render('status', { 
@@ -223,11 +258,16 @@ markingRouter.post('/:sheetId', async (req, res)=>{
 
   let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
   if (sheetRecord.exists) {
-    let { ssId, activeLecture, students, studentCount, belongsTo } = sheetRecord.data()
+    let { ssId, activeLecture, isActiveLecture, students, studentCount, belongsTo } = sheetRecord.data()
 
     if(activeLecture == 0)
       return res.status(403).render('status', { 
         status: 'Failed', message: 'No active lectures.' 
+      })
+
+    if (!isActiveLecture)
+      return res.status(403).render('status', { 
+        status: 'Denied', message: 'Attendance is closed.' 
       })
 
     const credentials = await readCredentials()
@@ -274,7 +314,7 @@ markingRouter.post('/:sheetId', async (req, res)=>{
           resource: {
             majorDimension: 'ROWS',
             values: [
-              [ roll, `${name} <${email}>` ]
+              [ roll, `${name} ${email}` ]
             ]
           }
         })
