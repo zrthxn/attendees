@@ -35,6 +35,7 @@ h2 {
 a {
   color: cadetblue;
   margin: 0.5em;
+  text-decoration: none;
 }
 a:visited {
   color: teal;
