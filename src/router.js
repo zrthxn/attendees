@@ -22,7 +22,7 @@ sheetRouter.use(async (req, res, next) => {
 
   if (access === crypto.createHash('sha512')
       .update(process.env.AUTH_KEY)
-      .update(token.tokens.access_token)
+      .update(token.access_token)
       .digest('hex')
     ) 
     next()
@@ -33,6 +33,9 @@ sheetRouter.use(async (req, res, next) => {
 // view sheet, and added lectures
 sheetRouter.get('/', async (req, res)=>{
   const { userId } = req.cookies
+
+  if (!userId) // Safegaurd
+    return res.redirect('/auth/login?then=sheets')
 
   let userRecord = await firestore.collection('users').doc(userId).get()
   if (userRecord.exists) {
