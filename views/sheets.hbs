@@ -30,7 +30,7 @@
           <span>{{ studentCount }} Students, {{ activeLecture }} Lectures</span>
           <br>
           {{#if isActiveLecture}}
-            <form action="/sheets/{{ sheetId }}/close" method="post" style="padding: 0; display: inline;">
+            <form action="/sheets/{{ sheetId }}/stop" method="post" style="padding: 0; display: inline;">
               <input type="submit" value="Close Attendance" 
                 style="background-color: transparent; border: none; color: darkcyan; padding: 0;">
             </form>
@@ -40,11 +40,11 @@
                 style="background-color: transparent; border: none; color: darkcyan; padding: 0;">
             </form>
           {{/if}}
-        </p>
 
-        <form action="/sheets/{{ sheetId }}/delete" method="post" style="padding: 0; float: right;">
-          <input type="submit" value="Delete" style="background-color: transparent; border: none; color: tomato;">
-        </form>
+          <form action="/sheets/{{ sheetId }}/delete" method="post" style="padding: 0; float: right;">
+            <input type="submit" value="Delete" style="background-color: transparent; border: none; color: tomato;">
+          </form>
+        </p>
       </div>
     {{/sheets}}
   </div>
