@@ -35,7 +35,7 @@ authRouter.post('/login', async (req, res)=>{
   if (token) {
     if (access === crypto.createHash('sha512')
       .update(process.env.AUTH_KEY)
-      .update(token.tokens.access_token)
+      .update(token.access_token)
       .digest('hex')) 
     {
       let destination
