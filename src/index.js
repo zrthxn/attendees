@@ -35,16 +35,11 @@ app.use('/static', express.static(path.resolve(__dirname, '../../static')))
 import { authRouter } from './auth'
 import { sheetRouter, markingRouter } from './router'
 
-app.get('/', (_, res)=>{
-  res.render('home', { title: 'Sheets Attendance | Attendance Management for Virtual Classes' })
-})
-
-app.get('/github', (_, res)=>{
-  res.redirect('https://github.com/zrthxn')
-})
+app.get('/', (_, res) => res.render('home', { title: 'Sheets Attendance | Attendance Management for Virtual Classes' }))
+app.get('/github', (_, res) => res.redirect('https://github.com/zrthxn/attendees'))
 
 app.use('/auth', authRouter)
 app.use('/sheets', sheetRouter)
 app.use('/mark', markingRouter)
 
-app.listen(3000, () => console.log('Server started') )
+app.listen(3000, () => console.log('Listening') )
