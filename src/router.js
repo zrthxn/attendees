@@ -48,7 +48,7 @@ sheetRouter.get('/', async (req, res)=>{
   }
   else
     return res.status(403).render('status', { 
-      status: 'Failed', message: 'This sheet does not exist.' 
+      status: 'Failed', title: 'Failed', message: 'This sheet does not exist.' 
     })
 })
 
@@ -112,7 +112,7 @@ sheetRouter.post('/:sheetId/stop', async (req, res)=>{
   }
   else
     return res.status(403).render('status', { 
-      status: 'Failed', message: 'This sheet does not exist.' 
+      status: 'Failed', title: 'Failed', message: 'This sheet does not exist.' 
     })
 })
 
@@ -133,7 +133,7 @@ sheetRouter.post('/:sheetId/delete', async (req, res)=>{
   }
   else
     return res.status(403).render('status', { 
-      status: 'Failed', message: 'This sheet does not exist.' 
+      status: 'Failed', title: 'Failed', message: 'This sheet does not exist.' 
     })
 })
 
@@ -343,13 +343,12 @@ markingRouter.post('/:sheetId', async (req, res)=>{
       })
 
     return res.render('status', {
-      status: 'Success', 
-      message: 'Your attendance was marked.' 
+      status: 'Success', title: 'Success', message: 'Your attendance was marked.' 
     })
   }
   else
     return res.status(403).render('status', { 
-      status: 'Failed', message: 'This sheet does not exist.' 
+      status: 'Failed', title: 'Failed', message: 'This sheet does not exist.' 
     })
 })
 
