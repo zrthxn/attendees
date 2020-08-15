@@ -4,7 +4,7 @@
   "description": "Very basic attendance manager for online classes",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "echo 'No Tests yet'",
     "build": "rimraf build/ && babel ./ --out-dir build/ --ignore ./node_modules,./.babelrc,./package.json",
     "start": "node build/src/index.js"
   },
