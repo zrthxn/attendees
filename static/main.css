@@ -67,6 +67,11 @@ a:visited[class~='link-button'] {
   background-color: royalblue;
   box-shadow: 2px 2px 5px #aaa;
 }
+.button:disabled {
+  color: white;
+  background-color: gray;
+  box-shadow: none;
+}
 
 /* Textbox */
 .textbox {

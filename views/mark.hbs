@@ -21,7 +21,7 @@
           required="true" onchange="lowercase(event)">
       {{/if}}
       <br>
-      <input type="submit" class="button">
+      <input type="submit" class="button" id="submit-btn" onclick="disableSubmit()">
     </form>
   {{/data}}
 </div>
@@ -40,5 +40,10 @@
 
   function lowercase(event) {
     event.target.value = event.target.value.toLowerCase()
+  }
+
+  function disableSubmit() {
+    document.getElementById("submit-btn").disabled = true
+    document.getElementById("submit-btn").value = "Loading"
   }
 </script>
