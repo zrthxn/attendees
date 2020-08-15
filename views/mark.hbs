@@ -1,6 +1,6 @@
 <div class="container">
   {{#data}}
-    <form action="/mark/{{ sheetId }}" method="post" style="margin: auto; padding: 2em;">
+    <form action="/mark/{{ sheetId }}" method="post" style="margin: auto; padding: 2em;" id="mark-form">
       <h2>Mark your Attendance</h2>
       <br>
       <span>
@@ -45,5 +45,6 @@
   function disableSubmit() {
     document.getElementById("submit-btn").disabled = true
     document.getElementById("submit-btn").value = "Loading"
+    document.getElementById("mark-form").submit()
   }
 </script>
