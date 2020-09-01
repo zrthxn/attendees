@@ -1,5 +1,5 @@
 # Sheets Attendance
-![wip](https://img.shields.io/badge/dev-beta-blue)
+![wip](https://img.shields.io/badge/dev-alpha-red)
 ![issues](https://img.shields.io/github/issues/zrthxn/attendees)
 ![commits](https://img.shields.io/github/last-commit/zrthxn/attendees)
 
