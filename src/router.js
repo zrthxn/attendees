@@ -99,6 +99,7 @@ sheetRouter.post('/:sheetId/next', async (req, res)=>{
     })
 })
 
+// Close Lecture
 sheetRouter.post('/:sheetId/stop', async (req, res)=>{
   const { sheetId } = req.params
 
@@ -106,6 +107,24 @@ sheetRouter.post('/:sheetId/stop', async (req, res)=>{
   if (sheetRecord.exists) {
     await firestore.collection('sheets').doc(sheetId).update({
       isActiveLecture: false
+    })
+
+    return res.redirect('/sheets')
+  }
+  else
+    return res.status(403).render('status', { 
+      status: 'Failed', title: 'Failed', message: 'This sheet does not exist.' 
+    })
+})
+
+// Reopen Lecture
+sheetRouter.post('/:sheetId/reopen', async (req, res)=>{
+  const { sheetId } = req.params
+
+  let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
+  if (sheetRecord.exists) {
+    await firestore.collection('sheets').doc(sheetId).update({
+      isActiveLecture: true
     })
 
     return res.redirect('/sheets')

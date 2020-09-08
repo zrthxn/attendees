@@ -35,6 +35,10 @@
                 style="background-color: transparent; border: none; color: darkcyan; padding: 0;">
             </form>
           {{else}}
+            <form action="/sheets/{{ sheetId }}/reopen" method="post" style="padding: 0; display: inline;">
+              <input type="submit" value="Reopen Previous" 
+                style="background-color: transparent; border: none; color: darkcyan; padding: 0;">
+            </form> | 
             <form action="/sheets/{{ sheetId }}/next" method="post" style="padding: 0; display: inline;">
               <input type="submit" value="New Lecture" 
                 style="background-color: transparent; border: none; color: darkcyan; padding: 0;">
