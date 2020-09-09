@@ -9,15 +9,14 @@
     {{#sheets}}
       <div class="container sheet-entry">
         <p style="text-align: right; float: right; font-size: small;">
-          Marking Link 
+          <a href="/mark/{{ sheetId }}" id="link">
+            Marking Link
+          </a>
           <label id="copy-btn" style="border-radius: 5px; padding: 0 5px; background-color: #eee;" 
             onclick="copyURL('https://attendees.zrthxn.com/mark/{{ sheetId }}')">
             Copy
           </label>
           <br>
-          <a href="/mark/{{ sheetId }}" id="link">
-            attendees.zrthxn.com/mark/{{ sheetId }}
-          </a>
         </p>
 
         <b>{{ subject }}</b>
