@@ -30,7 +30,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(multipart.array()) 
-app.use('/static', express.static(path.resolve(__dirname, '../../static')))
+// app.use('/static', express.static(path.resolve(__dirname, '../../static')))
 
 import { authRouter } from './auth'
 import { sheetRouter, markingRouter } from './router'
