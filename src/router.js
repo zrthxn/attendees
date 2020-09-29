@@ -261,7 +261,7 @@ markingRouter.get('/:sheetId', async (req, res)=>{
           if(req.signedCookies.verify === crypto.createHash('sha256')
               .update(req.signedCookies.roll)
               .update(sheetId)
-              .update(sheetRecord.data().activeLecture)
+              .update(sheetRecord.data().activeLecture.toString())
               .digest('base64'))
             throw 'Already Marked'
           
@@ -378,7 +378,7 @@ markingRouter.post('/:sheetId', async (req, res)=>{
     const verify = crypto.createHash('sha256')
       .update(roll)
       .update(sheetId)
-      .update(activeLecture)
+      .update(activeLecture.toString())
       .digest('base64')
 
     res.cookie('roll', roll, { httpOnly: true, signed: true })
