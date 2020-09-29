@@ -256,10 +256,24 @@ markingRouter.get('/:sheetId', async (req, res)=>{
   let sheetRecord = await firestore.collection('sheets').doc(sheetId).get()
   if (sheetRecord.exists) {
     if (sheetRecord.data().isActiveLecture)
-      return res.render('mark', { 
-        title: 'Mark your Attendance',
-        data: sheetRecord.data()
-      })
+      try {
+        if(req.signedCookies.roll && req.signedCookies.verify)
+          if(req.signedCookies.verify === crypto.createHash('sha256')
+              .update(req.signedCookies.roll)
+              .update(sheetId)
+              .update(sheetRecord.data().activeLecture)
+              .digest('base64'))
+            throw 'Already Marked'
+          
+        return res.render('mark', { 
+          title: 'Mark your Attendance',
+          data: sheetRecord.data()
+        })
+      } catch (error) {
+        return res.status(403).render('status', { 
+          status: 'Denied', title: 'Denied', message: 'You\'ve already marked your attendance.' 
+        })
+      }
     else
       return res.status(403).render('status', { 
         status: 'Denied', message: 'Attendance is closed.' 
@@ -361,8 +375,16 @@ markingRouter.post('/:sheetId', async (req, res)=>{
         }
       })
 
+    const verify = crypto.createHash('sha256')
+      .update(roll)
+      .update(sheetId)
+      .update(activeLecture)
+      .digest('base64')
+
+    res.cookie('roll', roll, { httpOnly: true, signed: true })
+    res.cookie('verify', verify, { maxAge: 86400000, httpOnly: true, signed: true })
     return res.render('status', {
-      status: 'Success', title: 'Success', message: 'Your attendance was marked.' 
+      status: 'Success', title: 'Success', message: 'Your attendance was marked.'
     })
   }
   else
