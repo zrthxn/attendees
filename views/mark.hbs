@@ -32,14 +32,15 @@
       .split(' ')
       .map(token => token.substr(0, 1).toUpperCase() + token.substr(1, token.length).toLowerCase())
       .join(' ')
+      .trim()
   }
 
   function uppcase(event) {
-    event.target.value = event.target.value.toUpperCase()
+    event.target.value = event.target.value.toUpperCase().trim()
   }
 
   function lowercase(event) {
-    event.target.value = event.target.value.toLowerCase()
+    event.target.value = event.target.value.toLowerCase().trim()
   }
 
   function disableSubmit() {
